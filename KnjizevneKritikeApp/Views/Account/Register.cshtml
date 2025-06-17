@@ -1,0 +1,11 @@
+﻿@model KnjizevneKritikeApp.Models.Korisnik
+
+<form method="post" asp-action="Register">
+    <label>Korisničko ime</label>
+    <input asp-for="KorisnickoIme" />
+    <label>Email</label>
+    <input asp-for="Email" type="email" />
+    <label>Lozinka</label>
+    <input name="lozinka" type="password" />
+    <button type="submit">Registruj se</button>
+</form>

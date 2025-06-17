@@ -1,0 +1,42 @@
+﻿@model List<KnjizevneKritikeApp.Models.Recenzija>
+
+@foreach (var rec in Model)
+{
+    <div class="recenzija">
+        <h3>@rec.NaslovKnjige</h3>
+        <p><strong>Autor:</strong> @rec.AutorKnjige</p>
+        <p><strong>Ocena:</strong> @rec.Ocena / 5</p>
+        <p>@rec.TekstRecenzije</p>
+        <p><em>Objavio: @rec.KorisnickoIme, @rec.DatumObjave.ToString("dd.MM.yyyy HH:mm")</em></p>
+
+        <h5>Komentari:</h5>
+        @if (rec.Komentari != null && rec.Komentari.Any())
+        {
+            <ul>
+                @foreach (var kom in rec.Komentari)
+                {
+                    <li>
+                        <strong>@kom.KorisnickoIme</strong> (@kom.Datum.ToString("dd.MM.yyyy HH:mm")): @kom.Tekst
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Nema komentara.</p>
+        }
+
+        @if (Context.Session.GetString("korisnikId") != null)
+        {
+            <form asp-action="DodajKomentar" method="post">
+                <input type="hidden" name="recenzijaId" value="@rec.Id" />
+                <textarea name="tekstKomentara" rows="2" cols="50" placeholder="Dodaj komentar..." required></textarea><br />
+                <button type="submit">Pošalji komentar</button>
+            </form>
+        }
+        else
+        {
+            <p><a href="/Account/Login">Prijavi se</a> da bi dodao komentar.</p>
+        }
+    </div>
+}
