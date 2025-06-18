@@ -3,7 +3,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Dodavanje servisa u DI container
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
-builder.Services.AddSingleton<MongoDbService>(); // Tvoj servis za MongoDB
+builder.Services.AddSingleton<MongoDbService>();
 
 var app = builder.Build();
 
