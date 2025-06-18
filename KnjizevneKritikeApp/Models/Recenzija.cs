@@ -1,23 +1,23 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+using System.ComponentModel.DataAnnotations;
 
-namespace KnjizevneKritikeApp.Models
+public class Recenzija
 {
-    public class Recenzija
-    {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
 
-        public string NaslovKnjige { get; set; }
-        public string AutorKnjige { get; set; }
-        public int Ocena { get; set; } // 1-5
-        public string TekstRecenzije { get; set; }
-        public string KorisnikId { get; set; }
-        public string KorisnickoIme { get; set; }
-        public DateTime DatumObjave { get; set; }
-        public List<Komentar> Komentari { get; set; } = new List<Komentar>();
-    }
+    [Required]
+    public string KnjigaId { get; set; }
+
+    [Required]
+    public string KorisnikId { get; set; }
+
+    [Required]
+    [Range(1, 5)]
+    public int Ocena { get; set; }
+
+    public string Komentar { get; set; }
+    public DateTime Datum { get; set; }
 }

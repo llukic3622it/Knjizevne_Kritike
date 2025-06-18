@@ -1,29 +1,38 @@
-﻿using MongoDB.Driver;
-using KnjizevneKritikeApp.Models;
+﻿using KnjizevneKritikeApp.Models;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public class MongoDbService
+namespace KnjizevneKritikeApp.Services
 {
-    private readonly IMongoCollection<Korisnik> _korisnici;
-
-    public MongoDbService(IMongoClient client)
+    public class MongoDbService
     {
-        var database = client.GetDatabase("knjizevne_kritike_db");
-        _korisnici = database.GetCollection<Korisnik>("korisnici");
-    }
+        private readonly IMongoClient _client;
+        private readonly IMongoDatabase _database;
 
-    public async Task<Korisnik> NadjiKorisnikaAsync(string korisnickoIme)
-    {
-        return await _korisnici.Find(k => k.KorisnickoIme == korisnickoIme).FirstOrDefaultAsync();
-    }
+        public MongoDbService(string connectionString, string databaseName)
+        {
+            _client = new MongoClient(connectionString);
+            _database = _client.GetDatabase(databaseName);
+        }
 
-    public async Task<Korisnik> NadjiKorisnikaPoImenuIliEmailAsync(string korisnickoIme, string email)
-    {
-        return await _korisnici.Find(k => k.KorisnickoIme == korisnickoIme || k.Email == email).FirstOrDefaultAsync();
-    }
+        public IMongoDatabase Database => _database;
 
-    public async Task DodajKorisnikaAsync(Korisnik korisnik)
-    {
-        await _korisnici.InsertOneAsync(korisnik);
+        public IMongoCollection<Korisnik> Korisnici => _database.GetCollection<Korisnik>("Korisnici");
+        public IMongoCollection<Recenzija> Recenzije => _database.GetCollection<Recenzija>("Recenzije");
+
+        public async Task<bool> TestKonekcijaAsync()
+        {
+            try
+            {
+                await _client.ListDatabaseNamesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

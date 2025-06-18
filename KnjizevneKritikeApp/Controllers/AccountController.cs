@@ -1,86 +1,91 @@
 ﻿using KnjizevneKritikeApp.Models;
-using Microsoft.AspNetCore.Mvc;
+using KnjizevneKritikeApp.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-public class AccountController : Controller
+namespace KnjizevneKritikeApp.Controllers
 {
-    private readonly MongoDbService _db;
-
-    public AccountController(MongoDbService db)
+    public class AccountController : Controller
     {
-        _db = db;
-    }
+        private readonly KorisnikService _service;
 
-    [HttpGet]
-    public IActionResult Register()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Register(Korisnik korisnik)
-    {
-        if (!ModelState.IsValid)
-            return View(korisnik);
-
-        // Provera da li korisnicko ime ili email vec postoji
-        var postojiKorisnik = await _db.NadjiKorisnikaPoImenuIliEmailAsync(korisnik.KorisnickoIme, korisnik.Email);
-        if (postojiKorisnik != null)
+        public AccountController(KorisnikService service)
         {
-            ModelState.AddModelError("", "Korisničko ime ili email već postoji.");
-            return View(korisnik);
+            _service = service;
         }
 
-        // Hashiranje lozinke
-        korisnik.LozinkaHash = BCrypt.Net.BCrypt.HashPassword(korisnik.Lozinka);
-        korisnik.DatumRegistracije = DateTime.Now;
-
-        // Brisanje plain lozinke iz objekta pre cuvanja
-        korisnik.Lozinka = null;
-        korisnik.PotvrdaLozinke = null;
-
-        await _db.DodajKorisnikaAsync(korisnik);
-
-        // Prebaci na Login posle uspešne registracije
-        return RedirectToAction("Login");
-    }
-
-    [HttpGet]
-    public IActionResult Login()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Login(string korisnickoIme, string lozinka)
-    {
-        if (string.IsNullOrEmpty(korisnickoIme) || string.IsNullOrEmpty(lozinka))
+        [HttpGet]
+        public IActionResult Register()
         {
-            ModelState.AddModelError("", "Unesite korisničko ime i lozinku.");
             return View();
         }
 
-        var korisnik = await _db.NadjiKorisnikaAsync(korisnickoIme);
-        if (korisnik == null || !BCrypt.Net.BCrypt.Verify(lozinka, korisnik.LozinkaHash))
+        [HttpPost]
+        public async Task<IActionResult> Register(Korisnik korisnik)
         {
-            ModelState.AddModelError("", "Neispravno korisničko ime ili lozinka.");
+            if (!ModelState.IsValid)
+                return View(korisnik);
+
+            if (await _service.KorisnickoImePostojiAsync(korisnik.KorisnickoIme))
+            {
+                ModelState.AddModelError("KorisnickoIme", "Korisničko ime već postoji.");
+                return View(korisnik);
+            }
+
+            if (await _service.EmailPostojiAsync(korisnik.Email))
+            {
+                ModelState.AddModelError("Email", "Email već postoji.");
+                return View(korisnik);
+            }
+
+            korisnik.DatumRegistracije = DateTime.Now;
+            korisnik.LozinkaHash = BCrypt.Net.BCrypt.HashPassword(korisnik.Lozinka);
+            korisnik.Lozinka = null;
+            korisnik.PotvrdaLozinke = null;
+
+            await _service.CreateAsync(korisnik);
+
+            TempData["Success"] = "Registracija uspešna! Prijavite se.";
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            ViewBag.Success = TempData["Success"];
             return View();
         }
 
-        // Postavljanje session podataka
-        HttpContext.Session.SetString("korisnikId", korisnik.Id);
-        HttpContext.Session.SetString("korisnickoIme", korisnik.KorisnickoIme);
+        [HttpPost]
+        public async Task<IActionResult> Login(string korisnickoIme, string lozinka)
+        {
+            if (string.IsNullOrEmpty(korisnickoIme) || string.IsNullOrEmpty(lozinka))
+            {
+                ModelState.AddModelError("", "Unesite korisničko ime i lozinku.");
+                return View();
+            }
 
-        // Prebaci na glavnu stranicu (npr. Recenzije/Index)
-        return RedirectToAction("Index", "Recenzije");
-    }
+            var korisnik = await _service.PrijaviSeAsync(korisnickoIme, lozinka);
+            if (korisnik == null)
+            {
+                ModelState.AddModelError("", "Neispravno korisničko ime ili lozinka.");
+                return View();
+            }
 
-    [HttpPost]
-    public IActionResult Logout()
-    {
-        HttpContext.Session.Clear();
-        return RedirectToAction("Login");
+            HttpContext.Session.SetString("korisnikId", korisnik.Id);
+            HttpContext.Session.SetString("korisnickoIme", korisnik.KorisnickoIme);
+
+            return RedirectToAction("Index", "Recenzije");
+        }
+
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
     }
 }

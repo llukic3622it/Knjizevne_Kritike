@@ -1,9 +1,7 @@
 ﻿using KnjizevneKritikeApp.Models;
 using MongoDB.Driver;
-using System.Security.Cryptography;
-using System.Text;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 
 namespace KnjizevneKritikeApp.Services
 {
@@ -13,46 +11,53 @@ namespace KnjizevneKritikeApp.Services
 
         public KorisnikService(MongoDbService mongoDbService)
         {
-            // Ne koristi GetDatabase(), već pristupi kolekciji preko javnog svojstva
             _korisnici = mongoDbService.Korisnici;
         }
 
+        // CRUD
+        public async Task<List<Korisnik>> GetAllAsync()
+        {
+            return await _korisnici.Find(_ => true).ToListAsync();
+        }
+
+        public async Task<Korisnik> GetByIdAsync(string id)
+        {
+            return await _korisnici.Find(x => x.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task CreateAsync(Korisnik korisnik)
+        {
+            await _korisnici.InsertOneAsync(korisnik);
+        }
+
+        public async Task UpdateAsync(string id, Korisnik korisnik)
+        {
+            await _korisnici.ReplaceOneAsync(x => x.Id == id, korisnik);
+        }
+
+        public async Task DeleteAsync(string id)
+        {
+            await _korisnici.DeleteOneAsync(x => x.Id == id);
+        }
+
+        // Login
+        public async Task<Korisnik> PrijaviSeAsync(string korisnickoIme, string lozinka)
+        {
+            var korisnik = await _korisnici.Find(x => x.KorisnickoIme == korisnickoIme).FirstOrDefaultAsync();
+            if (korisnik == null) return null;
+            if (!BCrypt.Net.BCrypt.Verify(lozinka, korisnik.LozinkaHash)) return null;
+            return korisnik;
+        }
+
+        // Provere za registraciju
         public async Task<bool> KorisnickoImePostojiAsync(string korisnickoIme)
         {
-            var korisnik = await _korisnici.Find(k => k.KorisnickoIme == korisnickoIme).FirstOrDefaultAsync();
-            return korisnik != null;
+            return await _korisnici.Find(x => x.KorisnickoIme == korisnickoIme).AnyAsync();
         }
 
         public async Task<bool> EmailPostojiAsync(string email)
         {
-            var korisnik = await _korisnici.Find(k => k.Email == email).FirstOrDefaultAsync();
-            return korisnik != null;
-        }
-
-        public async Task RegistrujAsync(Korisnik korisnik)
-        {
-            korisnik.LozinkaHash = HashLozinka(korisnik.Lozinka);
-            korisnik.DatumRegistracije = DateTime.UtcNow;
-            await _korisnici.InsertOneAsync(korisnik);
-        }
-
-        public async Task<Korisnik> PrijaviSeAsync(string korisnickoIme, string lozinka)
-        {
-            var korisnik = await _korisnici.Find(k => k.KorisnickoIme == korisnickoIme).FirstOrDefaultAsync();
-            if (korisnik == null) return null;
-
-            if (korisnik.LozinkaHash == HashLozinka(lozinka))
-                return korisnik;
-
-            return null;
-        }
-
-        private string HashLozinka(string lozinka)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(lozinka);
-            var hash = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
+            return await _korisnici.Find(x => x.Email == email).AnyAsync();
         }
     }
 }

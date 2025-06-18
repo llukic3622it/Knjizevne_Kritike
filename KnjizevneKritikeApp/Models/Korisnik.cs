@@ -11,11 +11,11 @@ namespace KnjizevneKritikeApp.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Korisničko ime je obavezno.")]
         public string KorisnickoIme { get; set; }
 
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = "Email je obavezan.")]
+        [EmailAddress(ErrorMessage = "Neispravan email.")]
         public string Email { get; set; }
 
         public string LozinkaHash { get; set; }
@@ -23,13 +23,13 @@ namespace KnjizevneKritikeApp.Models
         public DateTime DatumRegistracije { get; set; }
 
         [BsonIgnore]
-        [Required]
+        [Required(ErrorMessage = "Lozinka je obavezna.")]
         [DataType(DataType.Password)]
         [MinLength(6, ErrorMessage = "Lozinka mora imati najmanje 6 karaktera.")]
         public string Lozinka { get; set; }
 
         [BsonIgnore]
-        [Required]
+        [Required(ErrorMessage = "Potvrda lozinke je obavezna.")]
         [DataType(DataType.Password)]
         [Compare("Lozinka", ErrorMessage = "Lozinke se ne poklapaju.")]
         public string PotvrdaLozinke { get; set; }

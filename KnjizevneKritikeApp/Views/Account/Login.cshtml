@@ -1,27 +1,114 @@
 ﻿@{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Prijava";
 }
 
 <h2>Prijava</h2>
 
-<form method="post" asp-action="Login" novalidate>
-    <div class="mb-3">
-        <label for="korisnickoIme" class="form-label">Korisničko ime</label>
-        <input name="korisnickoIme" class="form-control" />
+<form asp-action="Login" method="post" class="login-form">
+    <div class="form-group">
+        <label for="korisnickoIme">Korisničko ime</label>
+        <input name="korisnickoIme" id="korisnickoIme" class="form-control" />
     </div>
-    <div class="mb-3">
-        <label for="lozinka" class="form-label">Lozinka</label>
-        <input name="lozinka" type="password" class="form-control" />
+    <div class="form-group">
+        <label for="lozinka">Lozinka</label>
+        <input name="lozinka" id="lozinka" type="password" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary w-100">Prijavi se</button>
+    <button type="submit" class="btn-primary">Prijavi se</button>
 
     @if (!ViewData.ModelState.IsValid)
     {
-        <div class="text-danger mt-2">
+        <div class="validation-summary">
             @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
             {
-                <div>@error.ErrorMessage</div>
+                <p>@error.ErrorMessage</p>
             }
         </div>
     }
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="alert alert-success">@ViewBag.Success</div>
+    }
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    .login-form {
+        max-width: 400px;
+        margin: 40px auto;
+        padding: 32px 24px 24px 24px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #222;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #bbb;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+    .btn-primary {
+        width: 100%;
+        padding: 10px 0;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 10px;
+    }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+    .validation-summary {
+        margin-top: 16px;
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        padding: 10px;
+        color: #d9534f;
+    }
+
+    .alert-success {
+        margin-top: 16px;
+        border-radius: 5px;
+        padding: 10px;
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+</style>

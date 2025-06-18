@@ -1,35 +1,116 @@
 ﻿@model KnjizevneKritikeApp.Models.Korisnik
 
-@{
-    ViewData["Title"] = "Registracija";
-}
-
 <h2>Registracija</h2>
 
-<form method="post" asp-action="Register" novalidate>
-    <div class="mb-3">
-        <label asp-for="KorisnickoIme" class="form-label"></label>
+<form asp-action="Register" method="post" class="register-form">
+    <div class="form-group">
+        <label asp-for="KorisnickoIme"></label>
         <input asp-for="KorisnickoIme" class="form-control" />
         <span asp-validation-for="KorisnickoIme" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" type="email" />
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="Lozinka" class="form-label"></label>
-        <input asp-for="Lozinka" class="form-control" type="password" />
+    <div class="form-group">
+        <label asp-for="Lozinka"></label>
+        <input asp-for="Lozinka" type="password" class="form-control" />
         <span asp-validation-for="Lozinka" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="PotvrdaLozinke" class="form-label"></label>
-        <input asp-for="PotvrdaLozinke" class="form-control" type="password" />
+    <div class="form-group">
+        <label asp-for="PotvrdaLozinke"></label>
+        <input asp-for="PotvrdaLozinke" type="password" class="form-control" />
         <span asp-validation-for="PotvrdaLozinke" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary w-100">Registruj se</button>
+
+    <button type="submit" class="btn-primary">Registruj se</button>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="validation-summary">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    .register-form {
+        max-width: 400px;
+        margin: 40px auto;
+        padding: 32px 24px 24px 24px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    }
+
+        .register-form h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #222;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #bbb;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+    .text-danger, .validation-summary p {
+        color: #d9534f;
+        font-size: 0.95em;
+        margin: 4px 0 0 0;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 10px 0;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 10px;
+    }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+    .validation-summary {
+        margin-top: 16px;
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        padding: 10px;
+    }
+</style>

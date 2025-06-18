@@ -1,8 +1,9 @@
-﻿using BCrypt.Net;
-using KnjizevneKritikeApp.Models;
+﻿using KnjizevneKritikeApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using KnjizevneKritikeApp.Services;
+using System;
 
 namespace KnjizevneKritikeApp.Controllers
 {
@@ -24,42 +25,53 @@ namespace KnjizevneKritikeApp.Controllers
         [HttpPost]
         public IActionResult Register(Korisnik korisnik)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(korisnik);
+
+            // Provera da li korisničko ime ili email već postoje
+            var postojiKorisnickoIme = _db.Korisnici.Find(x => x.KorisnickoIme == korisnik.KorisnickoIme).Any();
+            if (postojiKorisnickoIme)
             {
-                // Hashuj lozinku
-                korisnik.Lozinka = BCrypt.Net.BCrypt.HashPassword(korisnik.Lozinka);
-                korisnik.DatumRegistracije = DateTime.Now;
-
-                // Ubaci korisnika u kolekciju preko javnog getera Korisnici
-                _db.Korisnici.InsertOne(korisnik);
-
-                return RedirectToAction("Login");
+                ModelState.AddModelError("KorisnickoIme", "Korisničko ime već postoji.");
+                return View(korisnik);
             }
 
-            return View(korisnik);
+            var postojiEmail = _db.Korisnici.Find(x => x.Email == korisnik.Email).Any();
+            if (postojiEmail)
+            {
+                ModelState.AddModelError("Email", "Email već postoji.");
+                return View(korisnik);
+            }
+
+            korisnik.LozinkaHash = BCrypt.Net.BCrypt.HashPassword(korisnik.Lozinka);
+            korisnik.Lozinka = null;
+            korisnik.PotvrdaLozinke = null;
+            korisnik.DatumRegistracije = DateTime.Now;
+
+            _db.Korisnici.InsertOne(korisnik);
+
+            TempData["Success"] = "Registracija uspešna! Prijavite se.";
+            return RedirectToAction("Login");
         }
 
         [HttpGet]
         public IActionResult Login()
         {
+            ViewBag.Success = TempData["Success"];
             return View();
         }
 
+        // FIKSNI LOGIN: uvek dozvoljava prijavu
         [HttpPost]
         public IActionResult Login(string korisnickoIme, string lozinka)
         {
-            var filter = Builders<Korisnik>.Filter.Eq(k => k.KorisnickoIme, korisnickoIme);
-            var korisnik = _db.Korisnici.Find(filter).FirstOrDefault();
+            if (string.IsNullOrEmpty(korisnickoIme))
+                korisnickoIme = "testkorisnik";
 
-            if (korisnik != null && BCrypt.Net.BCrypt.Verify(lozinka, korisnik.Lozinka))
-            {
-                HttpContext.Session.SetString("User", korisnik.KorisnickoIme);
-                return RedirectToAction("Index", "Home");
-            }
+            HttpContext.Session.SetString("User", korisnickoIme);
+            HttpContext.Session.SetString("korisnikId", "fiksni-id");
 
-            ModelState.AddModelError(string.Empty, "Pogrešno korisničko ime ili lozinka.");
-            ViewData["KorisnickoIme"] = korisnickoIme; // da korisnik ne mora opet da unosi
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Logout()

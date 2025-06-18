@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 using KnjizevneKritikeApp.Models;
+using KnjizevneKritikeApp.Services;
 
 public class RecenzijeController : Controller
 {
@@ -18,6 +19,14 @@ public class RecenzijeController : Controller
         var recenzije = await _db.VratiSveRecenzijeAsync();
         return View(recenzije);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Pregled()
+    {
+        var recenzije = await _db.VratiSveRecenzijeAsync();
+        return View(recenzije);
+    }
+
 
     [HttpPost]
     public async Task<IActionResult> DodajKomentar(string recenzijaId, string tekstKomentara)

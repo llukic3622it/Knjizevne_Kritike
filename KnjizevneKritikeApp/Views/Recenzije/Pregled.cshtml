@@ -1,0 +1,23 @@
+﻿@model List<KnjizevneKritikeApp.Models.Recenzija>
+
+<h2>Pregled svih recenzija</h2>
+
+<table class="table">
+    <tr>
+        <th>Naslov</th>
+        <th>Autor</th>
+        <th>Ocena</th>
+        <th>Korisnik</th>
+        <th>Datum</th>
+    </tr>
+@foreach (var r in Model)
+{
+    <tr>
+        <td>@r.NaslovKnjige</td>
+        <td>@r.AutorKnjige</td>
+        <td>@r.Ocena</td>
+        <td>@r.KorisnickoIme</td>
+        <td>@r.DatumObjave.ToShortDateString()</td>
+    </tr>
+}
+</table>
