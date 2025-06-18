@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System;
 
 namespace KnjizevneKritikeApp.Services
 {
@@ -12,8 +13,8 @@ namespace KnjizevneKritikeApp.Services
 
         public KorisnikService(MongoDbService mongoDbService)
         {
-            var db = mongoDbService.GetDatabase();
-            _korisnici = db.GetCollection<Korisnik>("Korisnici");
+            // Ne koristi GetDatabase(), već pristupi kolekciji preko javnog svojstva
+            _korisnici = mongoDbService.Korisnici;
         }
 
         public async Task<bool> KorisnickoImePostojiAsync(string korisnickoIme)
@@ -31,7 +32,7 @@ namespace KnjizevneKritikeApp.Services
         public async Task RegistrujAsync(Korisnik korisnik)
         {
             korisnik.LozinkaHash = HashLozinka(korisnik.Lozinka);
-            korisnik.DatumRegistracije = System.DateTime.UtcNow;
+            korisnik.DatumRegistracije = DateTime.UtcNow;
             await _korisnici.InsertOneAsync(korisnik);
         }
 

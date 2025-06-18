@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+﻿using BCrypt.Net;
 using KnjizevneKritikeApp.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using BCrypt.Net;
 
 namespace KnjizevneKritikeApp.Controllers
 {
@@ -30,7 +30,7 @@ namespace KnjizevneKritikeApp.Controllers
                 korisnik.Lozinka = BCrypt.Net.BCrypt.HashPassword(korisnik.Lozinka);
                 korisnik.DatumRegistracije = DateTime.Now;
 
-                // Ubaci korisnika u kolekciju
+                // Ubaci korisnika u kolekciju preko javnog getera Korisnici
                 _db.Korisnici.InsertOne(korisnik);
 
                 return RedirectToAction("Login");
