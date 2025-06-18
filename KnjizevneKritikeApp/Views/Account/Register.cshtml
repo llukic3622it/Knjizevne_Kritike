@@ -1,11 +1,112 @@
 ﻿@model KnjizevneKritikeApp.Models.Korisnik
 
-<form method="post" asp-action="Register">
-    <label>Korisničko ime</label>
-    <input asp-for="KorisnickoIme" />
-    <label>Email</label>
-    <input asp-for="Email" type="email" />
-    <label>Lozinka</label>
-    <input name="lozinka" type="password" />
-    <button type="submit">Registruj se</button>
-</form>
+@{
+    ViewData["Title"] = "Registracija";
+}
+
+<style>
+    body {
+        min-height: 100vh;
+        background: url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+    }
+
+    .background-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(30, 30, 30, 0.55);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .register-card {
+        max-width: 400px;
+        margin: 60px auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(40, 60, 120, 0.18);
+        padding: 2.5rem 2rem 2rem 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-title {
+        color: #3e2723;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        letter-spacing: 1px;
+    }
+
+    .btn-primary {
+        background-color: #795548;
+        border-color: #795548;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+        .btn-primary:hover {
+            background-color: #3e2723;
+            border-color: #3e2723;
+        }
+
+    label {
+        font-weight: 500;
+        color: #3e2723;
+    }
+
+    .form-control:focus {
+        border-color: #795548;
+        box-shadow: 0 0 0 0.2rem rgba(121,85,72,.15);
+    }
+
+    .text-danger {
+        font-size: 0.95em;
+    }
+
+    .footer-locked {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #fff;
+        color: #3e2723;
+        text-align: center;
+        padding: 1rem 0;
+        box-shadow: 0 -2px 12px rgba(40, 60, 120, 0.10);
+        font-size: 1rem;
+        z-index: 10;
+        letter-spacing: 0.5px;
+    }
+    .container
+</style>
+
+<div class="background-overlay"></div>
+
+<div class="register-card">
+    <h2 class="register-title text-center">Registracija</h2>
+    <form method="post" asp-action="Register" novalidate>
+        <div class="mb-3">
+            <label asp-for="KorisnickoIme" class="form-label">Korisničko ime</label>
+            <input asp-for="KorisnickoIme" class="form-control" />
+            <span asp-validation-for="KorisnickoIme" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" type="email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Lozinka" class="form-label">Lozinka</label>
+            <input asp-for="Lozinka" type="password" class="form-control" />
+            <span asp-validation-for="Lozinka" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Registruj se</button>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

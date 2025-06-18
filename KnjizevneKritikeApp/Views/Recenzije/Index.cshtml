@@ -1,42 +1,54 @@
 ﻿@model List<KnjizevneKritikeApp.Models.Recenzija>
 
+@if (Context.Session.GetString("korisnikId") != null)
+{
+    <a href="/Recenzije/Dodaj" class="btn btn-success mb-4">Dodaj recenziju</a>
+}
+
 @foreach (var rec in Model)
 {
-    <div class="recenzija">
-        <h3>@rec.NaslovKnjige</h3>
-        <p><strong>Autor:</strong> @rec.AutorKnjige</p>
-        <p><strong>Ocena:</strong> @rec.Ocena / 5</p>
-        <p>@rec.TekstRecenzije</p>
-        <p><em>Objavio: @rec.KorisnickoIme, @rec.DatumObjave.ToString("dd.MM.yyyy HH:mm")</em></p>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">@rec.NaslovKnjige</h3>
+            <h6 class="card-subtitle mb-2 text-muted">Autor: @rec.AutorKnjige</h6>
+            <p class="card-text"><strong>Ocena:</strong> @rec.Ocena / 5</p>
+            <p class="card-text">@rec.TekstRecenzije</p>
+            <p class="text-muted small">Objavio: <strong>@rec.KorisnickoIme</strong>, @rec.DatumObjave.ToString("dd.MM.yyyy HH:mm")</p>
 
-        <h5>Komentari:</h5>
-        @if (rec.Komentari != null && rec.Komentari.Any())
-        {
-            <ul>
-                @foreach (var kom in rec.Komentari)
-                {
-                    <li>
-                        <strong>@kom.KorisnickoIme</strong> (@kom.Datum.ToString("dd.MM.yyyy HH:mm")): @kom.Tekst
-                    </li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p>Nema komentara.</p>
-        }
+            <hr />
+            <h5>Komentari</h5>
+            @if (rec.Komentari != null && rec.Komentari.Any())
+            {
+                <ul class="list-group mb-3">
+                    @foreach (var kom in rec.Komentari)
+                    {
+                        <li class="list-group-item">
+                            <strong>@kom.KorisnickoIme</strong>
+                            <span class="text-muted small">(@kom.Datum.ToString("dd.MM.yyyy HH:mm"))</span><br />
+                            @kom.Tekst
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted">Nema komentara.</p>
+            }
 
-        @if (Context.Session.GetString("korisnikId") != null)
-        {
-            <form asp-action="DodajKomentar" method="post">
-                <input type="hidden" name="recenzijaId" value="@rec.Id" />
-                <textarea name="tekstKomentara" rows="2" cols="50" placeholder="Dodaj komentar..." required></textarea><br />
-                <button type="submit">Pošalji komentar</button>
-            </form>
-        }
-        else
-        {
-            <p><a href="/Account/Login">Prijavi se</a> da bi dodao komentar.</p>
-        }
+            @if (Context.Session.GetString("korisnikId") != null)
+            {
+                <form asp-action="DodajKomentar" method="post" class="mt-3">
+                    <input type="hidden" name="recenzijaId" value="@rec.Id" />
+                    <div class="mb-2">
+                        <textarea class="form-control" name="tekstKomentara" rows="2" placeholder="Dodaj komentar..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Pošalji komentar</button>
+                </form>
+            }
+            else
+            {
+                <p><a href="/Account/Login" class="btn btn-outline-secondary btn-sm">Prijavi se</a> da bi dodao komentar.</p>
+            }
+        </div>
     </div>
 }
