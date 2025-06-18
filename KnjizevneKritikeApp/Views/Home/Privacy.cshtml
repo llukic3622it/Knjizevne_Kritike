@@ -1,6 +1,122 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Politika privatnosti";
 }
-<h1>@ViewData["Title"]</h1>
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-<p>Use this page to detail your site's privacy policy.</p>
+    .privacy-card {
+        background: rgba(255,255,255,0.97);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(40, 60, 120, 0.10);
+        padding: 40px 32px 32px 32px;
+        margin: 40px auto 60px auto;
+        max-width: 850px;
+    }
+
+        .privacy-card h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #3e2723;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .privacy-card h3 {
+            color: #2575fc;
+            margin-top: 2rem;
+            margin-bottom: 0.7rem;
+            font-size: 1.25rem;
+        }
+
+        .privacy-card ul {
+            margin-bottom: 1.2rem;
+        }
+
+        .privacy-card p, .privacy-card li {
+            color: #333;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .privacy-card a {
+            color: #2575fc;
+            text-decoration: underline;
+        }
+
+            .privacy-card a:hover {
+                color: #3e2723;
+            }
+
+    .privacy-date {
+        color: #888;
+        font-size: 0.98rem;
+        margin-bottom: 1.5rem;
+        text-align: right;
+    }
+</style>
+
+<div class="privacy-card">
+    <h1>@ViewData["Title"]</h1>
+    <div class="privacy-date">
+        <strong>Datum poslednje izmene:</strong> @DateTime.Now.ToString("dd.MM.yyyy")
+    </div>
+
+    <h3>1. Uvod</h3>
+    <p>
+        Vaša privatnost nam je važna. Ova politika privatnosti objašnjava koje podatke prikupljamo, kako ih koristimo, čuvamo i štitimo kada koristite sajt <strong>Književne Kritike</strong>.
+    </p>
+
+    <h3>2. Podaci koje prikupljamo</h3>
+    <ul>
+        <li><strong>Podaci o nalogu:</strong> Korisničko ime, email adresa i lozinka prilikom registracije.</li>
+        <li><strong>Sadržaj koji unosite:</strong> Recenzije, komentari i ocene koje objavljujete.</li>
+        <li><strong>Tehnički podaci:</strong> IP adresa, tip uređaja, pretraživač i kolačići radi poboljšanja funkcionalnosti sajta.</li>
+    </ul>
+
+    <h3>3. Kako koristimo vaše podatke</h3>
+    <ul>
+        <li>Za kreiranje i održavanje korisničkog naloga.</li>
+        <li>Za prikazivanje i moderaciju recenzija i komentara.</li>
+        <li>Za komunikaciju sa korisnicima (npr. obaveštenja, podrška).</li>
+        <li>Za analizu i unapređenje sajta.</li>
+    </ul>
+
+    <h3>4. Kolačići (Cookies)</h3>
+    <p>
+        Naš sajt koristi kolačiće radi poboljšanja korisničkog iskustva i analitike. Možete onemogućiti kolačiće u podešavanjima pretraživača, ali to može uticati na funkcionalnost sajta.
+    </p>
+
+    <h3>5. Deljenje podataka</h3>
+    <p>
+        Vaše podatke ne delimo sa trećim licima, osim ako to zakon zahteva ili je neophodno za funkcionisanje sajta (npr. hosting provajderi).
+    </p>
+
+    <h3>6. Bezbednost podataka</h3>
+    <p>
+        Preduzimamo odgovarajuće tehničke i organizacione mere za zaštitu vaših podataka od neovlašćenog pristupa, gubitka ili zloupotrebe.
+    </p>
+
+    <h3>7. Prava korisnika</h3>
+    <ul>
+        <li>Pravo na pristup i izmenu ličnih podataka.</li>
+        <li>Pravo na brisanje naloga i podataka.</li>
+        <li>Pravo na prigovor i ograničenje obrade podataka.</li>
+    </ul>
+    <p>
+        Za ostvarivanje svojih prava, kontaktirajte nas putem email adrese navedene na sajtu.
+    </p>
+
+    <h3>8. Izmene politike privatnosti</h3>
+    <p>
+        Politika privatnosti može biti povremeno izmenjena. O svim bitnim izmenama bićete obavešteni putem sajta ili emaila.
+    </p>
+
+    <h3>9. Kontakt</h3>
+    <p>
+        Za sva pitanja ili zahteve u vezi sa privatnošću, kontaktirajte nas na: <a href="mailto:podrska@knjizevnekritike.com">podrska@knjizevnekritike.com</a>
+    </p>
+</div>
